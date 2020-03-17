@@ -24,8 +24,13 @@ data = pd.read_csv(sys.argv[1])
 # The second argument is the place (either 'NYC', 'LA' or 'CHI')
 place = sys.argv[2]
 
+# Get DB indices from sys arguments.
+db_index_to_read = int(sys.argv[3])
+db_index_to_write = int(sys.argv[4])
+
 # Launch connector to redis.
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+r1 = redis.Redis(host='localhost', port=6379, db=db_index_to_read, decode_responses=True)
+r2 = redis.Redis(host='localhost', port=6379, db=db_index_to_write, decode_responses=True)
 
 # Iterate over dataset.
 for index, row in data.iterrows():
@@ -44,7 +49,7 @@ for index, row in data.iterrows():
     time_obj = datetime.strptime(time_date, time_format).replace(tzinfo=from_zone).astimezone(to_zone)
     
     # Check for errors.
-    if time_date is None or r.exists(get_key_weather(time_obj.date(), place)) == False:
+    if time_date is None or r1.exists(get_key_weather(time_obj.date(), place)) == False:
         continue
     
     # Pick the closest weather measurement we have for accident time. 
@@ -52,7 +57,7 @@ for index, row in data.iterrows():
 
     # Fetch the weather data for the date the accident happened.
     # This is present in the Redis DB because we inserted these records in the previous step. 
-    weather_data = json.loads(r.get(get_key_weather(time_obj.date(), place)))
+    weather_data = json.loads(r1.get(get_key_weather(time_obj.date(), place)))
     min_diff = 1e9
     min_item = ""
     
@@ -65,7 +70,7 @@ for index, row in data.iterrows():
             min_item = item
 
     # Insert into Redis.
-    r.set(get_key_accident(index, place), json.dumps(min_item))
+    r2.set(get_key_accident(index, place), json.dumps(min_item))
 
     # Tracking progress of how much we have inserted into Redis.
     if (index % 10000) == 0:

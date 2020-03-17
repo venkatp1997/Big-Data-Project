@@ -13,9 +13,10 @@ with open(sys.argv[1]) as f:
 
 # The second argument is the place (either 'NYC', 'LA' or 'CHI')
 place = sys.argv[2]
+db_index = int(sys.argv[3])
 
 # Connect to redis.
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+r = redis.Redis(host='localhost', port=6379, db=db_index, decode_responses=True)
 
 # Iterate over the JSON array.
 for item in data:
