@@ -5,7 +5,11 @@ Package storing common functions getting used by multiple other packages
 from datetime import date
 
 COLLISION = 'collision'
+
 TIME = 'time'
+
+LOCATION = 'location'
+
 HOUR = 'hour'
 DAY = 'day'
 MONTH = 'month'
@@ -38,10 +42,19 @@ DEC = 'dec'
 CURRENT_YEAR = date.today().year
 START_YEAR = 2012
 
+SAFEST = 'safest'
+DANGEROUS = 'dangerous'
+
+SEPARATOR = '#'
+
 
 def get_key(group, city_code, identifier, value):
-    key = COLLISION + '_' + city_code + '_' + group + '_' + identifier + '_' + str(value)
+    key = COLLISION + SEPARATOR + city_code + SEPARATOR + group + SEPARATOR + identifier + SEPARATOR + str(value)
     return str(key)
+
+
+def get_year(dt_year):
+    return dt_year
 
 
 def get_month(dt_month):
@@ -54,3 +67,7 @@ def get_day(dt_day):
     days = {0: MONDAY, 1: TUESDAY, 2: WEDNESDAY, 3: THURSDAY, 4: FRIDAY,
             5: SATURDAY, 6: SUNDAY}
     return days[dt_day]
+
+
+def get_hour(dt_hour):
+    return dt_hour
