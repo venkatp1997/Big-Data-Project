@@ -49,8 +49,8 @@ r = redis.Redis(host='localhost', port=6379, db=0)
 
 #For reference
 column_names = [
-':sid', 
-':id', 
+':sid',
+':id',
 ':position', 
 ':created_at', 
 ':created_meta', 
@@ -86,6 +86,7 @@ column_names = [
 'vehicle_type_code_3', 
 'vehicle_type_code_4', 
 'vehicle_type_code_5' ]
+
 
 cols_to_use = [
 'collision_id',
@@ -138,44 +139,44 @@ with open(filename, 'r', encoding='utf-8') as f:
         selected_row = []
         for item in cols_to_use:
             selected_row.append(row[column_names.index(item)])
-            
 
-        
-        #latlon (for future use)
+        # latlon (for future use)
         collision_id = selected_row[0] #collision_id
         if collision_id and collision_id != "":
             if selected_row[4] and selected_row[4] != "" and selected_row[5] and selected_row[5] != "":
-                r.set('collision_'+city_code+'_lat_' + str(collision_id), selected_row[4])
-                r.set('collision_'+city_code+'_lon_' + str(collision_id), selected_row[5])
+                r.set(utils.COLLISION + utils.SEPARATOR + city_code + utils.SEPARATOR + 'lat' + utils.SEPARATOR
+                      + str(collision_id), selected_row[4])
+                r.set(utils.COLLISION + utils.SEPARATOR + city_code + utils.SEPARATOR + 'lon' + utils.SEPARATOR
+                      + str(collision_id), selected_row[5])
 
         
         #time
         if selected_row[2] and selected_row[2] != "" and selected_row[3] and selected_row[3] != "":
             crash_dt_arr = process_datetime(selected_row[2], selected_row[3])  #[year,month,day]
             if crash_dt_arr is not None:
-                year_key = utils.get_key("time", city_code, "year",crash_dt_arr[0]) #Update year_count
-                if (r.exists(year_key)): 
+                year_key = utils.get_key(utils.TIME, city_code, utils.YEAR, crash_dt_arr[0]) #Update year_count
+                if r.exists(year_key):
                     old_count = int(r.get(year_key))
                     r.set(year_key, old_count + 1)
                 else:
                     r.set(year_key, 1)
                 
-                month_key = utils.get_key("time", city_code, "month",crash_dt_arr[1]) #Update month_count
-                if (r.exists(month_key)): 
+                month_key = utils.get_key(utils.TIME, city_code, utils.MONTH, crash_dt_arr[1]) #Update month_count
+                if r.exists(month_key):
                     old_count = int(r.get(month_key))
                     r.set(month_key, old_count + 1)
                 else:
                     r.set(month_key, 1)
                 
-                day_key = utils.get_key("time", city_code, "day",crash_dt_arr[2]) #Update day_count
-                if (r.exists(day_key)): 
+                day_key = utils.get_key(utils.TIME, city_code, utils.DAY, crash_dt_arr[2]) #Update day_count
+                if r.exists(day_key):
                     old_count = int(r.get(day_key))
                     r.set(day_key, old_count + 1)
                 else:
                     r.set(day_key, 1)
                 
-                hour_key = utils.get_key("time", city_code, "hour",crash_dt_arr[3]) #Update hour_count
-                if (r.exists(hour_key)):
+                hour_key = utils.get_key(utils.TIME, city_code, utils.HOUR, crash_dt_arr[3]) #Update hour_count
+                if r.exists(hour_key):
                     old_count = int(r.get(hour_key))
                     r.set(hour_key, old_count + 1)
                 else:
@@ -189,24 +190,24 @@ with open(filename, 'r', encoding='utf-8') as f:
             crash_cross_street ='_'.join(selected_row[8].strip().split()) if selected_row[8] else None
 
             if crash_on_street is not None:
-                on_street_key = utils.get_key("location", city_code, "on_street",crash_on_street) #Update on_street_count
-                if (r.exists(on_street_key)):
+                on_street_key = utils.get_key(utils.LOCATION, city_code, utils.ON_STREET, crash_on_street) #Update on_street_count
+                if r.exists(on_street_key):
                     old_count = int(r.get(on_street_key))
                     r.set(on_street_key, old_count + 1)
                 else:
                     r.set(on_street_key, 1)
 
             if crash_off_street is not None:
-                off_street_key = utils.get_key("location", city_code, "off_street",crash_off_street) #Update on_street_count
-                if (r.exists(off_street_key)):
+                off_street_key = utils.get_key(utils.LOCATION, city_code, utils.OFF_STREET, crash_off_street) #Update on_street_count
+                if r.exists(off_street_key):
                     old_count = int(r.get(off_street_key))
                     r.set(off_street_key, old_count + 1)
                 else:
                     r.set(off_street_key, 1)
 
             if crash_cross_street is not None:
-                cross_street_key = utils.get_key("location", city_code, "cross_street",crash_cross_street) #Update on_street_count
-                if (r.exists(cross_street_key)):
+                cross_street_key = utils.get_key(utils.LOCATION, city_code, utils.CROSS_STREET, crash_cross_street) #Update on_street_count
+                if r.exists(cross_street_key):
                     old_count = int(r.get(cross_street_key))
                     r.set(cross_street_key, old_count + 1)
                 else:
