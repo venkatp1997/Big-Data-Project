@@ -1,16 +1,24 @@
 """
 Package for answering easy business questions
 
+Enter command "python3 easy_question.py -h" to know about the arguments
 
 Sample command to run the script:
-python3 easy_question.py --city NYC
+python3 easy_question.py --city NYC --avg_coll_rate day --num_coll_time hour 0
+                         --safe_danger_time hour safest
+                         --num_coll_loc on_street WEST_211_STREET
+                         --safe_danger_loc on_street safest
+
+Here is --city is a required argument since we need to know statistics of which city are we concerned about. Rest of
+arguments are not required to be passed. They happen to have default values.
+
 
 OUTPUT:
 Average number of collisions on dayly basis is: 458.2083333333333
 Number of collisions during hour = 0 is: None
 Most safest time is hour = 0 with 0 collisions
 Number of collisions in on_street = WEST_211_STREET is: 2
-Most safest location is ARDEN with respect to on_street with 1 collision(s)
+Most safest location is on_street = ARDEN with 1 collision(s)
 
 See the arguments definition in order to know the arguments to pass and their default values (line 27 to line 39)
 """
@@ -172,11 +180,11 @@ def get_num_coll_loc():
     """
     result = 0
     if num_coll_loc[0] == utils.OFF_STREET:
-        result = int(r.get(utils.get_key(utils.LOCATION, city, utils.OFF_STREET, num_coll_loc[1])))
+        result = r.get(utils.get_key(utils.LOCATION, city, utils.OFF_STREET, num_coll_loc[1]))
     elif num_coll_loc[0] == utils.ON_STREET:
-        result = int(r.get(utils.get_key(utils.LOCATION, city, utils.ON_STREET, num_coll_loc[1])))
+        result = r.get(utils.get_key(utils.LOCATION, city, utils.ON_STREET, num_coll_loc[1]))
     elif num_coll_loc[0] == utils.CROSS_STREET:
-        result = int(r.get(utils.get_key(utils.LOCATION, city, utils.CROSS_STREET, num_coll_loc[1])))
+        result = r.get(utils.get_key(utils.LOCATION, city, utils.CROSS_STREET, num_coll_loc[1]))
     else:
         raise ValueError('Invalid type of location: ', num_coll_loc[0])
 
@@ -246,7 +254,7 @@ if num_coll_time is not None and len(num_coll_time) == 2:
 
 if safe_danger_time is not None and len(safe_danger_time) == 2:
     # safest or most dangerous time (can be hour/day/month/year) in terms of number of collisions
-    print('Most {} time is {} = {} with {} collisions'.format(safe_danger_time[1], safe_danger_time[0],
+    print('Most {} time is {} = {} with {} collision(s)'.format(safe_danger_time[1], safe_danger_time[0],
                                                               get_safe_or_danger_time()[0],
                                                               get_safe_or_danger_time()[1]))
 
@@ -256,7 +264,6 @@ if num_coll_loc is not None and len(num_coll_loc) == 2:
 
 if safe_danger_loc is not None and len(safe_danger_loc) == 2:
     # safest or most dangerous location (can be on/off/cross street) in terms of number of collisions
-    print('Most {} location is {} with respect to {} with {} collision(s)'.format(safe_danger_loc[1],
-                                                                                get_safe_or_danger_loc()[0],
-                                                                                safe_danger_loc[0],
-                                                                                get_safe_or_danger_loc()[1]))
+    print('Most {} location is {} = {} with {} collision(s)'.format(safe_danger_loc[1], safe_danger_loc[0],
+                                                                    get_safe_or_danger_loc()[0],
+                                                                    get_safe_or_danger_loc()[1]))
