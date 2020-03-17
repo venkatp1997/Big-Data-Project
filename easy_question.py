@@ -12,7 +12,7 @@ Most safest time is hour = 0 with 0 collisions
 Number of collisions in on_street = WEST_211_STREET is: 2
 Most safest location is ARDEN with respect to on_street with 1 collision(s)
 
-
+See the arguments definition in order to know the arguments to pass and their default values (line 27 to line 39)
 """
 
 import argparse
