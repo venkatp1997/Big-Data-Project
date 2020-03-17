@@ -2,6 +2,8 @@
 Package storing common functions getting used by multiple other packages
 """
 
+from datetime import date
+
 COLLISION = 'collision'
 TIME = 'time'
 HOUR = 'hour'
@@ -32,6 +34,9 @@ SEP = 'sep'
 OCT = 'oct'
 NOV = 'nov'
 DEC = 'dec'
+
+CURRENT_YEAR = date.today().year
+START_YEAR = 2012
 
 
 def get_key(group, city_code, identifier, value):
