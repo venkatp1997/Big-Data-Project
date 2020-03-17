@@ -125,7 +125,7 @@ def process_datetime(date_str, time_str):
         return [dt_year,dt_month,dt_day,dt_hour]
    
    
-with open(filename, 'r') as f:
+with open(filename, 'r', encoding='utf-8') as f:
     objects = ijson.items(f, 'data.item')
     i = 0
     for row in objects:
