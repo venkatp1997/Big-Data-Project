@@ -1,5 +1,18 @@
 """
 Package for answering easy business questions
+
+
+Sample command to run the script:
+python3 easy_question.py --city NYC
+
+OUTPUT:
+Average number of collisions on dayly basis is: 458.2083333333333
+Number of collisions during hour = 0 is: None
+Most safest time is hour = 0 with 0 collisions
+Number of collisions in on_street = WEST_211_STREET is: 2
+Most safest location is ARDEN with respect to on_street with 1 collision(s)
+
+
 """
 
 import argparse
@@ -14,9 +27,9 @@ r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 parser = argparse.ArgumentParser(description='Utility to answer easy business questions')
 
 parser.add_argument('--city', default='NYC', help='city under consideration', required=True)
-parser.add_argument('--avg_coll_rate', default=utils.HOUR,
+parser.add_argument('--avg_coll_rate', default=utils.DAY,
                     help='number of collisions hourly/daily/monthly/yearly')
-parser.add_argument('--num_coll_time', nargs=2, default=[utils.HOUR, '17'],
+parser.add_argument('--num_coll_time', nargs=2, default=[utils.HOUR, '0'],
                     help='total number of collisions in given hour/day/month/year')
 parser.add_argument('--safe_danger_time', nargs=2, default=[utils.HOUR, utils.SAFEST],
                     help='safest or dangerous hour/day/month/year')
@@ -43,19 +56,23 @@ def get_avg_coll_rate():
     result = 0
     if num_coll_time[0] == utils.HOUR:
         for i in range(0, 24):
-            result = result + int(r.get(utils.get_key(utils.TIME, city, utils.HOUR, i)))
+            key = utils.get_key(utils.TIME, city, utils.HOUR, i)
+            result = result + int(r.get(key) if r.exists(key) else 0)
         result = result / 24
     elif num_coll_time[0] == utils.DAY:
         for i in range(0, 7):
-            result = result + int(r.get(utils.get_key(utils.TIME, city, utils.DAY, utils.get_day(i))))
+            key = utils.get_key(utils.TIME, city, utils.DAY, utils.get_day(i))
+            result = result + int(r.get(key) if r.exists(key) else 0)
         result = result / 7
     elif num_coll_time[0] == utils.MONTH:
         for i in range(1, 13):
-            result = result + int(r.get(utils.get_key(utils.TIME, city, utils.MONTH, utils.get_month(i))))
+            key = utils.get_key(utils.TIME, city, utils.MONTH, utils.get_month(i))
+            result = result + int(r.get(key) if r.exists(key) else 0)
         result = result / 12
     elif num_coll_time[0] == utils.YEAR:
         for i in range(utils.START_YEAR, utils.CURRENT_YEAR + 1):
-            result = result + int(r.get(utils.get_key(utils.TIME, city, utils.YEAR, i)))
+            key = utils.get_key(utils.TIME, city, utils.YEAR, i)
+            result = result + int(r.get(key) if r.exists(key) else 0)
         result = result / (utils.CURRENT_YEAR - utils.START_YEAR + 1)
     else:
         raise ValueError('Invalid type of duration: ', avg_coll_rate_type)
@@ -70,13 +87,13 @@ def get_num_coll_time():
     """
     result = 0
     if num_coll_time[0] == utils.HOUR:
-        result = int(r.get(utils.get_key(utils.TIME, city, utils.HOUR, int(num_coll_time[1]))))
+        result = r.get(utils.get_key(utils.TIME, city, utils.HOUR, int(num_coll_time[1])))
     elif num_coll_time[0] == utils.DAY:
-        result = int(r.get(utils.get_key(utils.TIME, city, utils.DAY, utils.get_day(int(num_coll_time[1])))))
+        result = r.get(utils.get_key(utils.TIME, city, utils.DAY, utils.get_day(int(num_coll_time[1]))))
     elif num_coll_time[0] == utils.MONTH:
-        result = int(r.get(utils.get_key(utils.TIME, city, utils.MONTH, utils.get_month(int(num_coll_time[1])))))
+        result = r.get(utils.get_key(utils.TIME, city, utils.MONTH, utils.get_month(int(num_coll_time[1]))))
     elif num_coll_time[0] == utils.YEAR:
-        result = int(r.get(utils.get_key(utils.TIME, city, utils.HOUR, int(num_coll_time[1]))))
+        result = r.get(utils.get_key(utils.TIME, city, utils.HOUR, int(num_coll_time[1])))
     else:
         raise ValueError('Invalid type of duration: ', num_coll_time[0])
 
@@ -101,11 +118,12 @@ def find_extremum_time(begin, end, duration_type, extremum_type, dur_func):
     elif extremum_type == utils.SAFEST:
         result = max
     else:
-        raise ValueError('Invalid type of extremum type: ', safe_danger_time[1])
+        raise ValueError('Invalid type of extremum type: ', extremum_type)
     dur = dur_func(1)
     for i in range(begin, end):
         curr_dur = dur_func(i)
-        curr_val = int(r.get(utils.get_key(utils.TIME, city, duration_type, curr_dur)))
+        key = utils.get_key(utils.TIME, city, duration_type, curr_dur)
+        curr_val = int(r.get(key) if r.exists(key) else 0)
         if extremum_type == utils.DANGEROUS:
             if curr_val > result:
                 result = curr_val
@@ -125,24 +143,24 @@ def get_safe_or_danger_time():
     """
     dur = 0
     result = 0
-    if num_coll_time[0] == utils.HOUR:
+    if safe_danger_time[0] == utils.HOUR:
         begin = 0
         end = 24
-        dur, result = find_extremum_time(begin, end, num_coll_time[0], num_coll_time[1], utils.get_hour)
-    elif num_coll_time[0] == utils.DAY:
+        dur, result = find_extremum_time(begin, end, safe_danger_time[0], safe_danger_time[1], utils.get_hour)
+    elif safe_danger_time[0] == utils.DAY:
         begin = 0
         end = 7
-        dur, result = find_extremum_time(begin, end, num_coll_time[0], num_coll_time[1], utils.get_day)
-    elif num_coll_time[0] == utils.MONTH:
+        dur, result = find_extremum_time(begin, end, safe_danger_time[0], safe_danger_time[1], utils.get_day)
+    elif safe_danger_time[0] == utils.MONTH:
         begin = 1
         end = 13
-        dur, result = find_extremum_time(begin, end, num_coll_time[0], num_coll_time[1], utils.get_month)
-    elif num_coll_time[0] == utils.YEAR:
+        dur, result = find_extremum_time(begin, end, safe_danger_time[0], safe_danger_time[1], utils.get_month)
+    elif safe_danger_time[0] == utils.YEAR:
         begin = utils.START_YEAR
         end = utils.CURRENT_YEAR + 1
-        dur, result = find_extremum_time(begin, end, num_coll_time[0], num_coll_time[1], utils.get_year)
+        dur, result = find_extremum_time(begin, end, safe_danger_time[0], safe_danger_time[1], utils.get_year)
     else:
-        raise ValueError('Invalid type of duration: ', num_coll_time[0])
+        raise ValueError('Invalid type of duration: ', safe_danger_time[0])
 
     return dur, result
 
@@ -153,14 +171,14 @@ def get_num_coll_loc():
     :return:
     """
     result = 0
-    if num_coll_time[0] == utils.OFF_STREET:
-        result = result + int(r.get(utils.get_key(utils.LOCATION, city, utils.OFF_STREET, int(num_coll_loc[1]))))
-    elif num_coll_time[0] == utils.ON_STREET:
-        result = result + int(r.get(utils.get_key(utils.LOCATION, city, utils.ON_STREET, int(num_coll_loc[1]))))
-    elif num_coll_time[0] == utils.CROSS_STREET:
-        result = result + int(r.get(utils.get_key(utils.LOCATION, city, utils.CROSS_STREET, int(num_coll_loc[1]))))
+    if num_coll_loc[0] == utils.OFF_STREET:
+        result = int(r.get(utils.get_key(utils.LOCATION, city, utils.OFF_STREET, num_coll_loc[1])))
+    elif num_coll_loc[0] == utils.ON_STREET:
+        result = int(r.get(utils.get_key(utils.LOCATION, city, utils.ON_STREET, num_coll_loc[1])))
+    elif num_coll_loc[0] == utils.CROSS_STREET:
+        result = int(r.get(utils.get_key(utils.LOCATION, city, utils.CROSS_STREET, num_coll_loc[1])))
     else:
-        raise ValueError('Invalid type of location: ', num_coll_time[0])
+        raise ValueError('Invalid type of location: ', num_coll_loc[0])
 
     return result
 
@@ -180,13 +198,13 @@ def find_extremum_loc(location_type, extremum_type):
     elif extremum_type == utils.SAFEST:
         result = max
     else:
-        raise ValueError('Invalid type of extremum: ', safe_danger_time[1])
+        raise ValueError('Invalid type of extremum: ', extremum_type)
     location = ''
     for key in r.keys(
             pattern=utils.COLLISION + utils.SEPARATOR + city + utils.SEPARATOR + utils.LOCATION + utils.SEPARATOR +
                     location_type + utils.SEPARATOR + '*'):
-        curr_location = key.split(separator=utils.SEPARATOR)[4]
-        curr_val = int(r.get(utils.get_key(utils.LOCATION, city, location_type, curr_location)))
+        curr_location = key.split(sep=utils.SEPARATOR)[5]
+        curr_val = int(r.get(key))
         if extremum_type == utils.DANGEROUS:
             if curr_val > result:
                 result = curr_val
@@ -205,18 +223,17 @@ def get_safe_or_danger_loc():
     :return:
     """
     result = 0
-    dur = 0
-    if num_coll_time[0] == utils.OFF_STREET:
-        result = result + int(r.get(utils.get_key(utils.LOCATION, city, utils.OFF_STREET, int(num_coll_time[1]))))
-    elif num_coll_time[0] == utils.ON_STREET:
-        result = result + int(r.get(utils.get_key(utils.LOCATION, city, utils.ON_STREET, utils.get_day(int(num_coll_time[1])))))
-    elif num_coll_time[0] == utils.CROSS_STREET:
-        result = result + int(r.get(utils.get_key(utils.LOCATION, city, utils.CROSS_STREET,
-                                         utils.get_month(int(num_coll_time[1])))))
+    location = ''
+    if safe_danger_loc[0] == utils.OFF_STREET:
+        location, result = find_extremum_loc(utils.OFF_STREET, safe_danger_loc[1])
+    elif safe_danger_loc[0] == utils.ON_STREET:
+        location, result = find_extremum_loc(utils.ON_STREET, safe_danger_loc[1])
+    elif safe_danger_loc[0] == utils.CROSS_STREET:
+        location, result = find_extremum_loc(utils.CROSS_STREET, safe_danger_loc[1])
     else:
-        raise ValueError('Invalid type of location: ', num_coll_time[0])
+        raise ValueError('Invalid type of location: ', safe_danger_loc[0])
 
-    return dur, result
+    return location, result
 
 
 if avg_coll_rate_type is not None:
@@ -238,8 +255,8 @@ if num_coll_loc is not None and len(num_coll_loc) == 2:
     print('Number of collisions in {} = {} is: {}'.format(num_coll_loc[0], num_coll_loc[1], get_num_coll_loc()))
 
 if safe_danger_loc is not None and len(safe_danger_loc) == 2:
-    # number of collisions in given location (can be in terms of off street, on street or cross street)
-    print('Most {} location is {} with respect to {} with {} collisions'.format(safe_danger_loc[1],
+    # safest or most dangerous location (can be on/off/cross street) in terms of number of collisions
+    print('Most {} location is {} with respect to {} with {} collision(s)'.format(safe_danger_loc[1],
                                                                                 get_safe_or_danger_loc()[0],
                                                                                 safe_danger_loc[0],
                                                                                 get_safe_or_danger_loc()[1]))
