@@ -3,7 +3,7 @@ This script is used to store the collisions data in the Redis store.
 The keys of the Redis store are organized to minimize the size of values and store the counts only. Logic to be processed in application layer.
 
 Run command - python3 collision_redis_put.json  <city_code['CHI','LA','NYC']> <filename>
-Eg - python3 collision_redis_put.json NYC collision_nyc.json 
+Eg - python3 collision_redis_put.py NYC collision_nyc.json 
 
 3 groups of key
 
@@ -119,7 +119,7 @@ def process_datetime(date_str, time_str):
     dt_month = dt.month
     dt_day = dt.weekday()
     dt_hour = dt.hour
-    if dt_year and isinstance(dt_year, int) and dt_month and isinstance(dt_month, int) and dt_day >= 0 and isinstance(dt_day, int) and dt_hour and isinstance(dt_hour, int):
+    if dt_year and isinstance(dt_year, int) and dt_month >=0 and isinstance(dt_month, int) and dt_day >= 0 and isinstance(dt_day, int) and dt_hour >=0  and isinstance(dt_hour, int):
         dt_month = get_month(dt_month)
         dt_day = get_day(dt_day)
         return [dt_year,dt_month,dt_day,dt_hour]
