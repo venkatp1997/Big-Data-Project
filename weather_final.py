@@ -46,3 +46,4 @@ for item in data:
 
     # Insert into Redis DB. 
     r.set(get_key(key, place), json.dumps(val))
+
