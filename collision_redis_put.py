@@ -3,8 +3,8 @@ This script is used to store the collisions data in the Redis store.
 The keys of the Redis store are organized to minimize the size of values and store the counts only.
 Logic to be processed in application layer.
 
-Run command - python3 collision_redis_put.json  <city_code['CHI','LA','NYC']> <filename>
-Eg - python3 collision_redis_put.json NYC collision_nyc.json 
+Run command - python3 collision_redis_put.json <filename> <city_code['CHI','LA','NYC']> <db_index_to_write>
+Eg - python3 collision_redis_put.py NYC collision_nyc.json 0
 
 3 groups of key
 
@@ -42,9 +42,12 @@ import sys
 import utils
 startTime = datetime.now()
 
-filename = 'collision_nyc.json' # sys.argv[2]
-city_code = 'NYC' # sys.argv[1]
-r = redis.Redis(host='localhost', port=6379, db=0)
+#Filename
+filename = sys.argv[1]
+city_code = sys.argv[2]
+db_to_write = int(sys.argv[3])
+
+r = redis.Redis(host='localhost', port=6379, db=db_to_write)
 
 
 #For reference
