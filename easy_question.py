@@ -20,6 +20,63 @@ Most safest time is hour = 0 with 0 collisions
 Number of collisions in on_street = WEST_211_STREET is: 2
 Most safest location is on_street = ARDEN with 1 collision(s)
 
+b'collision_NYC_time_hour_10' --> b'30339'
+b'collision_NYC_time_hour_22' --> b'107864'
+b'collision_NYC_time_hour_9' --> b'21152'
+b'collision_NYC_time_hour_15' --> b'87216'
+b'collision_NYC_time_hour_4' --> b'46435'
+b'collision_NYC_time_hour_21' --> b'118939'
+b'collision_NYC_time_hour_3' --> b'46413'
+b'collision_NYC_time_hour_14' --> b'87628'
+b'collision_NYC_time_hour_12' --> b'76717'
+b'collision_NYC_time_hour_2' --> b'54807'
+b'collision_NYC_time_hour_13' --> b'93738'
+b'collision_NYC_time_hour_19' --> b'108621'
+b'collision_NYC_time_hour_16' --> b'91929'
+b'collision_NYC_time_hour_23' --> b'91722'
+b'collision_NYC_time_hour_17' --> b'96272'
+b'collision_NYC_time_hour_6' --> b'21808'
+b'collision_NYC_time_hour_0' --> b'76193'
+b'collision_NYC_time_hour_1' --> b'63784'
+b'collision_NYC_time_hour_7' --> b'17736'
+b'collision_NYC_time_hour_11' --> b'44580'
+b'collision_NYC_time_hour_8' --> b'18886'
+b'collision_NYC_time_hour_18' --> b'108525'
+b'collision_NYC_time_hour_5' --> b'33278'
+b'collision_NYC_time_hour_20' --> b'118671'
+
+b'collision_NYC_time_month_aug' --> b'145569'
+b'collision_NYC_time_month_mar' --> b'129186'
+b'collision_NYC_time_month_feb' --> b'123281'
+b'collision_NYC_time_month_oct' --> b'150908'
+b'collision_NYC_time_month_nov' --> b'143818'
+b'collision_NYC_time_month_may' --> b'137597'
+b'collision_NYC_time_month_jan' --> b'133565'
+b'collision_NYC_time_month_jun' --> b'137852'
+b'collision_NYC_time_month_jul' --> b'148469'
+b'collision_NYC_time_month_dec' --> b'146096'
+b'collision_NYC_time_month_sep' --> b'145833'
+b'collision_NYC_time_month_apr' --> b'121079'
+
+b'collision_NYC_time_day_tue' --> b'243883'
+b'collision_NYC_time_day_sun' --> b'203256'
+b'collision_NYC_time_day_thu' --> b'247879'
+b'collision_NYC_time_day_wed' --> b'243940'
+b'collision_NYC_time_day_mon' --> b'240064'
+b'collision_NYC_time_day_fri' --> b'261413'
+b'collision_NYC_time_day_sat' --> b'222818'
+
+b'collision_NYC_time_year_2015' --> b'217696'
+b'collision_NYC_time_year_2013' --> b'203753'
+b'collision_NYC_time_year_2016' --> b'229837'
+b'collision_NYC_time_year_2018' --> b'231442'
+b'collision_NYC_time_year_2020' --> b'31510'
+b'collision_NYC_time_year_2017' --> b'231026'
+b'collision_NYC_time_year_2012' --> b'100437'
+b'collision_NYC_time_year_2014' --> b'206005'
+b'collision_NYC_time_year_2019' --> b'211547'
+
+
 See the arguments definition in order to know the arguments to pass and their default values (line 27 to line 39)
 """
 

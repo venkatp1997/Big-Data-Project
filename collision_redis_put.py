@@ -126,7 +126,7 @@ def process_datetime(date_str, time_str):
     dt_month = dt.month
     dt_day = dt.weekday()
     dt_hour = dt.hour
-    if dt_year and isinstance(dt_year, int) and dt_month and isinstance(dt_month, int) and dt_day >= 0 and isinstance(dt_day, int) and dt_hour and isinstance(dt_hour, int):
+    if dt_year and isinstance(dt_year, int) and dt_month >=0 and isinstance(dt_month, int) and dt_day >= 0 and isinstance(dt_day, int) and dt_hour >= 0 and isinstance(dt_hour, int):
         dt_month = utils.get_month(dt_month)
         dt_day = utils.get_day(dt_day)
         return [dt_year,dt_month,dt_day,dt_hour]
