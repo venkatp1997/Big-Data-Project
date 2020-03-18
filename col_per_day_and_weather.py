@@ -100,3 +100,36 @@ sky is clear         1
 Name: weather_description, dtype: int64
 
 '''
+
+'''
+For reference : 
+{'light rain': 182809,
+ 'scattered clouds': 381009,
+ 'broken clouds': 283732,
+ 'light snow': 141345,
+ 'mist': 81374,
+ 'moderate rain': 58786,
+ 'overcast clouds': 376110,
+ 'few clouds': 134512,
+ 'sky is clear': 44245,
+ 'light intensity drizzle': 16144,
+ 'snow': 22411,
+ 'thunderstorm': 968,
+ 'heavy intensity rain': 10577,
+ 'thunderstorm with heavy rain': 629,
+ 'thunderstorm with light rain': 2334,
+ 'heavy snow': 2328,
+ 'fog': 7674,
+ 'smoke': 53,
+ 'rain and snow': 80,
+ 'light rain and snow': 1337,
+ 'haze': 978,
+ 'freezing rain': 109,
+ 'thunderstorm with rain': 1387,
+ 'proximity thunderstorm': 243,
+ 'shower drizzle': 13,
+ 'squalls': 69,
+ 'very heavy rain': 91,
+ 'drizzle': 40}
+
+'''
