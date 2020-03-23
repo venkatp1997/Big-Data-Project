@@ -324,3 +324,6 @@ if safe_danger_loc is not None and len(safe_danger_loc) == 2:
     print('Most {} location is {} = {} with {} collision(s)'.format(safe_danger_loc[1], safe_danger_loc[0],
                                                                     get_safe_or_danger_loc()[0],
                                                                     get_safe_or_danger_loc()[1]))
+'''
+python3 easy_question.py --city NYC --avg_coll_rate day --num_coll_time month 3 --safe_danger_time hour dangerous --num_coll_loc on_street WEST_211_STREET --safe_danger_loc on_street safest
+'''

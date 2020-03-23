@@ -3,7 +3,7 @@ import utils
 import sys
 import geohash
 import json
-
+import utils
 
 '''
 This file reads weather pattern from by successively reducing the precision and returns the most frequent probable cause of accidents
@@ -27,7 +27,7 @@ def create_levels(s):
     return ret
 
 def get_key_pattern(h,city_code):
-    return 'accident_'+city_code+'_'+h+'_*'
+    return 'accident_'+city_code+'_'+h
 
 def get_total_key(city_code):
     return 'accident_'+city_code+'_total_*'
@@ -40,7 +40,7 @@ def get_weather(key):
     ret = ret.strip()
     return ret
 
-def do_query(key_pattern):
+def do_query2(key_pattern):
     ret = {}
     for key in r.scan_iter(key_pattern):
         weather_type = get_weather(key)
@@ -48,13 +48,30 @@ def do_query(key_pattern):
     new_ret =sorted(ret.items(), key=lambda x: x[0], reverse=True)
     return new_ret
 
+def get_buckets(q):
+    ret = []
+    for w in utils.weather_type:
+        weather = w.replace(' ','_').strip()
+        k = q +'_' + weather 
+        ret.append(k)
+    return ret
 
+def do_query(keys):
+    ret = {}
+    for key in keys:
+        if(r.get(key)):
+            weather_type = get_weather(key)
+            ret[int(r.get(key))] = weather_type
+    new_ret = sorted(ret.items(), key=lambda x: x[0], reverse=True)
+    return new_ret
+         
 
 def find_nearest_weather(query_patterns,city_code):
     for q in query_patterns:
         print("Searching in the precision of....->",q)
         query = get_key_pattern(q, city_code)
-        results = do_query(query)
+        keys = get_buckets(query)
+        results = do_query(keys)
         if results is not None and len(results) > 0:
             return results
         else:
@@ -63,8 +80,6 @@ def find_nearest_weather(query_patterns,city_code):
     return do_query(get_total_key(city_code))
         
         
-        
-
 if __name__ == "__main__":
     
     city_code = sys.argv[1] #'NYC'
@@ -81,10 +96,14 @@ if __name__ == "__main__":
     weather_data = find_nearest_weather(query_patterns,city_code)
 
     if weather_data is not None and len(weather_data) > 0:
-        print(weather_data[0][1]," weather pattern caused most accidents with frquency:",weather_data[0][0])
+        print(weather_data[0][1]," weather pattern caused most accidents with frequency:",weather_data[0][0])
     else:
         print("Not Found")
 
+
+    '''
+    python3 latlong_get.py NYC 3 40.7219510525 -73.99626933038
+    '''
 
 
 
